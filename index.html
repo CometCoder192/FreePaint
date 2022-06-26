@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Free Paint</title>
+</head>
+<body>
+	
+<canvas id="draw" width="800" height="800"></canvas>
+<h6> Press CTRL to clear canvas. Made by <span>CometCoder192</span></h6>
+<script>
+	const canvas = document.getElementById('draw');
+	const ctx = canvas.getContext('2d'); 
+
+	// This sets the height and width of the canvas to the height and width of the browser.
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight * 1/1.1;
+
+    ctx.strokeStyle = 'b00b16' // Starting color of the stroke
+	ctx.lineJoin = 'round'; // Gives the stroke a smooth texture
+	ctx.lineCap = 'round';
+	ctx.lineWidth = 0;
+
+	let isDrawing = false; // this var is set to true when mousedown event listener is triggered.
+	let lastX = 0;
+	let lastY = 0;
+	let hue = 0;
+	let direction = true; // when dir===true, stroke size++. else strokeSize--
+
+	function draw(e) {
+		if (!isDrawing) return; //this stops the function when isdrawing is set to false.
+		ctx.strokeStyle = `hsl(${hue},100%,50%)`
+		console.log(e);
+		ctx.beginPath();
+		ctx.moveTo(lastX,lastY);
+		ctx.lineTo(e.offsetX, e.offsetY);
+		ctx.stroke();
+		[lastX,lastY]=[e.offsetX, e.offsetY];
+
+		hue++;
+		if (hue >= 360) {hue=0} 
+		if (ctx.lineWidth >= 50 || ctx.lineWidth <= 1) {
+    		direction = !direction;
+		}
+
+  		if(direction) {
+    		ctx.lineWidth++;
+  		} else {
+    	ctx.lineWidth--;
+  		}
+	}
+
+	canvas.addEventListener('mousedown', (e) => {
+	  isDrawing = true;
+	  [lastX, lastY] = [e.offsetX, e.offsetY];
+	});
+
+
+	canvas.addEventListener('mousemove', draw);
+	canvas.addEventListener('mouseup', () => isDrawing = false);
+	canvas.addEventListener('mouseout', () => isDrawing = false);
+
+	document.addEventListener('keydown', (e) => {
+
+		if (e.ctrlKey == true) {
+			canvas.style.background = 'black';
+		}
+	})
+	
+	document.addEventListener('keyup', (e) => {
+			canvas.style.background = 'white';
+			ctx.clearRect(0,0, canvas.width, canvas.height);
+	})
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+    overflow: hidden;
+    font-size: monospace;
+  }
+
+  canvas {
+  	background: white;
+  	outline:  1px solid green;
+  }
+  h6 {
+
+  	user-select: none;
+  }
+  span {
+  	  	animation-name: colorChange;
+  	animation-duration: 3s;
+  	animation-iteration-count: infinite;
+  }
+  @keyframes colorChange {
+  	0% {
+  		color: initial;
+  	}
+  	50% {
+  		color: lime;
+  	} 
+  	100% {
+  		color: initial;
+  	}
+  }
+</style>
+
+</body>
+</html>
